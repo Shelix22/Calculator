@@ -6,7 +6,9 @@ body {
     padding-left: 25%;
     padding-right: 25%;
     padding-top: 120px;
-    gap: 2px;
+    display: grid;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .keys {
@@ -15,14 +17,14 @@ body {
     grid-template-rows: repeat(5, 1fr);
     gap: 10px;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
 }
 
 
 .input {
     display: grid;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
 }
 
 #div23 {
