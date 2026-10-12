@@ -1,7 +1,6 @@
 let input = document.getElementById('calc-input')
 let calc_input = "";
 let result = "";
-const cursor_inputs = document.getElementById('calc-input')
 
 let buttons = document.querySelectorAll('button')
 
@@ -14,18 +13,21 @@ const allowedKeys = [
     'Enter',
     '=',
     'Escape',
-    'Delete'
+    'Delete',
+    'ArrowRight',
+    'ArrowLeft'
 ];
 
 console.log('Script loaded, found', buttons.length, 'buttons')
+
+function scrollInputToCaret() {
+    input.scrollLeft = input.scrollWidth;
+}
 
 function calculate(calc_input) {
     return ""
 }
 
-// Todo: Make it so that even while typing with buttons, the cursor automatically moves into the input box
-// Also make it so on pressing button/typing number get added wherever the cursor is not just at the end.
-// Also add auto-scroll to the text box
 let arr = Array.from(buttons)
 arr.forEach(button => {
     button.addEventListener('click', (e) => {
@@ -33,32 +35,54 @@ arr.forEach(button => {
             result = calculate(calc_input)
             input.value = result
             calc_input = ""
+            input.focus();
+            scrollInputToCaret()
         }
         else if (e.currentTarget.id == 'backspace-button') {
-            // This only deletes last character. Todo: Add cursor based deletion
-            calc_input = calc_input.substring(0, calc_input.length - 1)
+            const start = input.selectionStart;
+            calc_input = calc_input.slice(0, start-1) + calc_input.slice(start)
             input.value = calc_input
+            input.focus(); 
+            input.setSelectionRange(start-1, start-1)
+            scrollInputToCaret()
         }
         else if (e.currentTarget.id == 'ac-button') {
             calc_input = ""
             input.value = calc_input
+            input.focus();
+            scrollInputToCaret()
         }
         else if (e.currentTarget.id == 'divide-button') {
-            calc_input += "/"
+            const start = input.selectionStart;
+            calc_input = calc_input.slice(0, start) + "/" + calc_input.slice(start)
             input.value = calc_input
+            input.focus();
+            input.setSelectionRange(start+1, start+1)
+            scrollInputToCaret()
         }
         else if (e.currentTarget.id == 'multiply-button') {
-            calc_input += "*"
+            const start = input.selectionStart;
+            calc_input = calc_input.slice(0, start) + "*" + calc_input.slice(start)
             input.value = calc_input
+            input.focus();
+            input.setSelectionRange(start+1, start+1)
+            scrollInputToCaret()
         }
         else if (e.currentTarget.id == 'exponent-button') {
-            calc_input += "^()"
+            const start = input.selectionStart;
+            calc_input = calc_input.slice(0, start) + "^" + calc_input.slice(start)
             input.value = calc_input
-            // move cursor one unit to left
+            input.focus(); 
+            input.setSelectionRange(start+1, start+1)
+            scrollInputToCaret()
         }
         else {
-            calc_input += e.currentTarget.textContent.trim()
+            const start = input.selectionStart;
+            calc_input = calc_input.slice(0, start) + e.currentTarget.textContent.trim() + calc_input.slice(start)
             input.value = calc_input
+            input.focus(); 
+            input.setSelectionRange(start+1, start+1)
+            scrollInputToCaret()
         }
     })
 })
@@ -69,24 +93,54 @@ input.addEventListener('keydown', (e) => {
         return;
     } else {
         if (e.key == 'Backspace') {
-            // This only deletes last character. Todo: Add cursor based deletion
-            calc_input = calc_input.substring(0, calc_input.length - 1)
+            e.preventDefault()
+            const start = input.selectionStart;
+            calc_input = calc_input.slice(0, start-1) + calc_input.slice(start)
             input.value = calc_input
+            input.focus();
+            input.setSelectionRange(start-1, start-1)
+            scrollInputToCaret()
         }
         else if (e.key == '=' || e.key == 'Enter') {
+            e.preventDefault()
             result = calculate(calc_input)
             input.value = result
             calc_input = ""
+            input.focus();
+            scrollInputToCaret()
         } else if (e.key == 'Escape' || e.key == 'Delete') {
+            e.preventDefault()
             calc_input = ""
             input.value = calc_input
+            input.focus();
+            scrollInputToCaret()
         } else if ( e.key == 'x' ) {
-            calc_input += '*'
+            e.preventDefault()
+            const start = input.selectionStart;
+            calc_input = calc_input.slice(0, start) + "*" + calc_input.slice(start)
             input.value = calc_input
-        } else {
-            calc_input += e.key
+            input.focus();
+            input.setSelectionRange(start+1, start+1)
+            scrollInputToCaret()
+        } else if (e.key == 'ArrowRight') {
+            e.preventDefault()
+            const currentPos = input.selectionStart;
+            input.setSelectionRange(currentPos+1, currentPos+1)
+            scrollInputToCaret()
+        } else if (e.key == 'ArrowLeft') {
+            e.preventDefault()
+            const currentPos = input.selectionStart;
+            input.setSelectionRange(currentPos-1, currentPos-1)
+            scrollInputToCaret()
+        } 
+        else {
+            e.preventDefault()
+            const start = input.selectionStart;
+            calc_input = calc_input.slice(0, start) + e.key + calc_input.slice(start)
             input.value = calc_input
+            input.focus();
+            input.setSelectionRange(start+1, start+1)
+            scrollInputToCaret()
         }
     }
 })
-
